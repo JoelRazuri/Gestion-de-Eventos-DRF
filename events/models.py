@@ -11,6 +11,9 @@ class Event(models.Model):
     capacity = models.IntegerField(validators=[validator_capacity], blank=False, null=False)
     organizer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, validators=[validator_is_organizer])
 
+    def __str__(self):
+        return self.tilte
+
 
 class Registration(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
