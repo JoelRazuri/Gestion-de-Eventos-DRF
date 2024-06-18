@@ -1,10 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
-
-def validator_role(value):
-    if 1 > value > 3:
-        raise ValueError('El rol solo puede ser 1, 2 o 3')
+from .validations import *
 
 
 class CustomUser(AbstractUser):
