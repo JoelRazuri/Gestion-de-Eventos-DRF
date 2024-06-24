@@ -2,7 +2,7 @@ from datetime import datetime
 
 # Validaciones para la clase Event
 def validator_is_organizer(user):
-    if user.role != 1 and user.role != 2:
+    if user.role != 1 or user.role != 2:
         raise ValueError('El usuario no es organizador')
 
 def validator_capacity(capacity):
