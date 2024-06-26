@@ -8,7 +8,7 @@ class Event(models.Model):
     image = models.ImageField(upload_to='event_images/', null=True, blank=True)
     date = models.DateTimeField(blank=False, null=False)
     capacity = models.IntegerField(blank=False, null=False)
-    organizer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    organizer = models.ForeignKey(CustomUser, related_name='events',on_delete=models.CASCADE)
 
     def __str__(self):
         return self.tilte
