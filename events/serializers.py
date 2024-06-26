@@ -3,6 +3,8 @@ from .models import Event, Rating, Registration, Comment
 
 
 class EventSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    
     class Meta:
         model = Event
         fields = '__all__'
