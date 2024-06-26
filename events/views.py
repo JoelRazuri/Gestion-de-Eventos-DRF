@@ -1,13 +1,16 @@
-from .serializers import EventSerializer
-from .models import Event
-from rest_framework import status
-from rest_framework.views import  APIView
+from rest_framework import status, permissions
 from rest_framework.response import  Response
+from .permissions import IsOwnerOrReadOnly
+from rest_framework.views import  APIView
+from .serializers import EventSerializer
 from django.http import Http404
+from .models import Event
 
 
 
 class EventCreateListView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    
     def get(self, request, format=None):
         events = Event.objects.all()
         serializer = EventSerializer(events, many=True)
@@ -22,6 +25,8 @@ class EventCreateListView(APIView):
 
 
 class EventDetailUpdateDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    
     def get_object(self, pk):
         try:
             return Event.objects.get(pk=pk)
