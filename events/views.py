@@ -15,7 +15,7 @@ class EventCreateListView(APIView):
     def get(self, request, format=None):
         events = Event.objects.all()
         serializer = EventSerializer(events, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request, format=None):
         serializer = EventSerializer(data=request.data)
@@ -37,7 +37,7 @@ class EventDetailUpdateDeleteView(APIView):
     def get(self, request, pk, format=None):
         event = self.get_object(pk)
         serializer = EventSerializer(event)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
         event = self.get_object(pk)
