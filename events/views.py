@@ -2,12 +2,12 @@ from rest_framework import status, permissions
 from rest_framework.response import  Response
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.views import  APIView
-from .serializers import EventSerializer
+from .serializers import EventSerializer, RegistrationSerializer
 from django.http import Http404
-from .models import Event
+from .models import Event, Registration
 
 
-
+# Events Views
 class EventCreateListView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     
@@ -19,7 +19,7 @@ class EventCreateListView(APIView):
     def post(self, request, format=None):
         serializer = EventSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=self.request.user)
+            serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -51,3 +51,32 @@ class EventDetailUpdateDeleteView(APIView):
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# Registration Views
+class ListCreateRegistrationView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def get(self, request):
+        registration = Registration.objects.all()
+        serializer = RegistrationSerializer(registration, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteRegistrationView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Registration.objects.get(pk=pk)
+        except Registration.DoesNotExist:
+            raise Http404
+
+    def delete(self, request, pk):
+        registration = self.get_object(pk)
+        registration.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
