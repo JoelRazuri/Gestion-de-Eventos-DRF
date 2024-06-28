@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, permissions
 from rest_framework.response import  Response
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsOrganizerOrReadOnly
 from rest_framework.views import  APIView
 from .serializers import EventSerializer
 from django.http import Http404
