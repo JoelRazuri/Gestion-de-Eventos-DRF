@@ -10,7 +10,7 @@ from .models import Event, Registration
 
 # Events Views
 class EventCreateListView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get(self, request, format=None):
         events = Event.objects.all()
@@ -56,7 +56,7 @@ class EventDetailUpdateDeleteView(APIView):
 class RegisterForEventView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     
-    def post(self, request, event_id):
+    def get(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
         if Registration.objects.filter(event=event, user=request.user).exists():
             return Response({'detail': 'Ya estás inscrito en este evento.'}, status=status.HTTP_400_BAD_REQUEST)
