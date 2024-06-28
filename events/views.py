@@ -54,7 +54,7 @@ class EventDetailUpdateDeleteView(APIView):
 
 # Registration Views
 class RegisterForEventView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
