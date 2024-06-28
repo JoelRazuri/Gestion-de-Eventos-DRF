@@ -10,7 +10,7 @@ from .models import Event, Registration
 
 # Events Views
 class EventCreateListView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOrganizerOrReadOnly]
     
     def get(self, request, format=None):
         events = Event.objects.all()
