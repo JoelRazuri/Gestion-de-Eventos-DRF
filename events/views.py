@@ -56,8 +56,8 @@ class EventDetailUpdateDeleteView(APIView):
 class RegisterForEventView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
-    def get(self, request, event_id):
-        event = get_object_or_404(Event, id=event_id)
+    def get(self, request, pk):
+        event = get_object_or_404(Event, id=pk)
         if Registration.objects.filter(event=event, user=request.user).exists():
             return Response({'detail': 'Ya estás inscrito en este evento.'}, status=status.HTTP_400_BAD_REQUEST)
         if event.capacity <= Registration.objects.filter(event=event).count():
@@ -67,8 +67,8 @@ class RegisterForEventView(APIView):
         registration.save()
         return Response({'detail': 'Inscripción exitosa.'}, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, event_id):
-        event = get_object_or_404(Event, id=event_id)
+    def delete(self, request, pk):
+        event = get_object_or_404(Event, id=pk)
         registration = get_object_or_404(Registration, event=event, user=request.user)
         registration.delete()
         return Response({'detail': 'Inscripción cancelada.'}, status=status.HTTP_204_NO_CONTENT)
