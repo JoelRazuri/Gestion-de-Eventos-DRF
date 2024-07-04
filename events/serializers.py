@@ -3,16 +3,10 @@ from .models import Event, Rating, Registration, Comment
 
 
 class EventSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    organizer = serializers.ReadOnlyField(source='organizer.username')
     
     class Meta:
         model = Event
-        fields = '__all__'
-
-
-class RatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rating
         fields = '__all__'
 
 
@@ -23,6 +17,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    event = serializers.ReadOnlyField(source='event.tilte')
+
     class Meta:
         model = Comment
+        fields = '__all__'
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
         fields = '__all__'
