@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, permissions
 from rest_framework.response import  Response
-from .permissions import IsOwnerOrReadOnly, IsOrganizerOrReadOnly
+from .permissions import IsOwnerEventOrReadOnly, IsOrganizerOrReadOnly, IsOwnerCommentOrReadOnly
 from rest_framework.views import  APIView
-from .serializers import EventSerializer, RegistrationSerializer, CommentSerializer, RatingSerializer
+from .serializers import EventSerializer, CommentSerializer, RatingSerializer
 from django.http import Http404
 from .models import Event, Registration, Comment, Rating
 
@@ -26,7 +26,7 @@ class EventCreateListView(APIView):
 
 
 class EventDetailUpdateDeleteView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerEventOrReadOnly]
     
     def get_object(self, event_id):
         try:
@@ -93,5 +93,29 @@ class CommentsEventCreateListView(APIView):
 
 
 class CommentsEventDetailUpdateDeleteView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-    pass
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentOrReadOnly]
+
+    def get_object(self, event_id, comment_id):
+        try:
+            event = get_object_or_404(Event, id=event_id)
+            return Comment.objects.get(id=comment_id, event=event)
+        except Comment.DoesNotExist:
+            return Http404
+
+    def get(self, request, event_id, comment_id, format=None):
+        comment = self.get_object(event_id, comment_id)
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def put(self, request, event_id, comment_id, format=None):
+        comment = self.get_object(event_id, comment_id)
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, event_id, comment_id, format=None):
+        comment = self.get_object(event_id, comment_id)
+        comment.delete()
+        return Response({'detail': 'Comentario eliminado'}, status=status.HTTP_204_NO_CONTENT)
