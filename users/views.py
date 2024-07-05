@@ -18,14 +18,14 @@ class UserListView(APIView):
   
 
 class UserDetailView(APIView):
-    def get_object(self, pk):
+    def get_object(self, user_id):
         try:
-            return CustomUser.objects.get(pk=pk)
+            return CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
             raise Http404
     
-    def get(self, request, pk, format=None):
-        user = self.get_object(pk)
+    def get(self, request, user_id, format=None):
+        user = self.get_object(user_id)
         serializer = CustomUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
