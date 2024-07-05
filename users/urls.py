@@ -10,7 +10,7 @@ from django.urls import path
 urlpatterns = [
     # Users urls for administration
     path('users/', UserListView.as_view()),
-    path('users/<int:pk>', UserDetailView.as_view()),
+    path('users/<int:user_id>', UserDetailView.as_view()),
     path('users/<int:user_id>/registrations/', UserListRegistrationsView.as_view()),
     # Profile user urls
     path('profile/', ProfileView.as_view()),
