@@ -122,7 +122,7 @@ class CommentsEventDetailUpdateDeleteView(APIView):
 
 
 # Rating Views
-class RatingEventView(APIView):
+class RatingsEventView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, event_id, format=None):
