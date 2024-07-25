@@ -52,7 +52,7 @@ class EventDetailUpdateDeleteView(APIView):
         event.delete()
         return Response({'detail': 'Evento eliminado.'},status=status.HTTP_204_NO_CONTENT)
 
-# Registration Views
+# rating Views
 class RegisterEventView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
@@ -119,3 +119,23 @@ class CommentsEventDetailUpdateDeleteView(APIView):
         comment = self.get_object(event_id, comment_id)
         comment.delete()
         return Response({'detail': 'Comentario eliminado'}, status=status.HTTP_204_NO_CONTENT)
+
+
+# Rating Views
+class RatingEventView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request, event_id, format=None):
+        event = get_object_or_404(Event, id=event_id)
+        ratings = Rating.objects.filter(event=event)
+        serializer = RatingSerializer(ratings, many=True)
+        return Response (serializer.data, status=status.HTTP_200_OK)
+
+
+    def post(self, request, event_id, format=None):
+        event = get_object_or_404(Event, id=event_id)
+        serializer = RatingSerializer(data=request.data)
+        if serializer.is_valid(): 
+            serializer.save(event=event, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
