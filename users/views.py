@@ -56,3 +56,13 @@ class ProfileListRegistrationsView(APIView):
         registrations = Registration.objects.filter(user=request.user)
         serializer = RegistrationSerializer(registrations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+# Register and Login views
+class RegisterUserView(APIView):
+    def post(self, request, format=None):
+        pass
+
+class LoginUserView(APIView):
+    def post(self, request, format=None):
+        pass
