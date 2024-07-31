@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from events.serializers import RegistrationSerializer
 from events.models import Registration
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, CustomUserListSerializer
 from .models import CustomUser
 from rest_framework import status, permissions
 from rest_framework.views import  APIView
@@ -13,7 +13,7 @@ from django.http import Http404
 class UserListView(APIView):
     def get(self, request, format=None):
         users = CustomUser.objects.all()
-        serializer = CustomUserSerializer(users, many=True)
+        serializer = CustomUserListSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
   
 
@@ -26,7 +26,7 @@ class UserDetailView(APIView):
     
     def get(self, request, user_id, format=None):
         user = self.get_object(user_id)
-        serializer = CustomUserSerializer(user)
+        serializer = CustomUserListSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -45,7 +45,7 @@ class ProfileView(APIView):
 
     def get(self, request):
         profile = CustomUser.objects.get(id=request.user.id)
-        serializer = CustomUserSerializer(profile)
+        serializer = CustomUserListSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -61,7 +61,11 @@ class ProfileListRegistrationsView(APIView):
 # Register and Login views
 class RegisterUserView(APIView):
     def post(self, request, format=None):
-        pass
+        serializer = CustomUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginUserView(APIView):
     def post(self, request, format=None):
