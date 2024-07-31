@@ -123,7 +123,7 @@ class CommentsEventDetailUpdateDeleteView(APIView):
 
 # Rating Views
 class RatingsEventView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get(self, request, event_id, format=None):
         event = get_object_or_404(Event, id=event_id)
