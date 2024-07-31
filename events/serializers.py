@@ -26,6 +26,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class RatingSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    event = serializers.ReadOnlyField(source='event.tilte')
+    
     class Meta:
         model = Rating
         fields = '__all__'
