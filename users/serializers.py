@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import CustomUser
 from events.models import Event
 
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -20,3 +21,9 @@ class CustomUserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'name', 'last_name', 'email', 'password', 'role', 'events']
+
+
+class CustomUserTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'name', 'last_name', 'email', 'role']
