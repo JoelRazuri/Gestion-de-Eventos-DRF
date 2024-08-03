@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404
 from events.serializers import RegistrationSerializer
 from events.models import Registration
-from .serializers import CustomUserSerializer, CustomUserListSerializer
+from .serializers import CustomUserSerializer, CustomUserListSerializer, CustomUserTokenSerializer
 from .models import CustomUser
 from rest_framework import status, permissions
 from rest_framework.views import  APIView
 from rest_framework.authtoken.views import ObtainAuthToken 
+from rest_framework.authtoken.models import Token
 from rest_framework.response import  Response
 from django.http import Http404
 
@@ -72,5 +73,18 @@ class LoginUserView(ObtainAuthToken):
     def post(self, request, format=None):
         login_serializer = self.serializer_class(data=request.data, context={'request':request})
         if login_serializer.is_valid():
-            return Response()
+            user = login_serializer.validated_data['user']
+            if user.is_active:
+                token, created = Token.objects.get_or_create(user=user)
+                if created:
+                    user_serializer = CustomUserTokenSerializer(user)
+                    return Response(
+                        {
+                            'token': token.key,
+                            'user': user_serializer
+                        }, 
+                        status=status.HTTP_201_CREATED
+                    )
+                return Response()
+            return Response({'message': 'El usuario no esta activo'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(login_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
