@@ -76,15 +76,16 @@ class LoginUserView(ObtainAuthToken):
             user = login_serializer.validated_data['user']
             if user.is_active:
                 token, created = Token.objects.get_or_create(user=user)
+                user_serializer = CustomUserTokenSerializer(user)
                 if created:
-                    user_serializer = CustomUserTokenSerializer(user)
                     return Response(
                         {
                             'token': token.key,
-                            'user': user_serializer
+                            'user': user_serializer.data
                         }, 
                         status=status.HTTP_201_CREATED
                     )
-                return Response()
+                token.delete()
+                return Response({'message_error': 'Ya ha iniciado sesión'}, status=status.HTTP_409_CONFLICT)
             return Response({'message': 'El usuario no esta activo'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(login_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
