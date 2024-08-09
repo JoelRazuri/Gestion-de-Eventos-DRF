@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status, permissions
+from rest_framework import status, permissions, authentication
 from rest_framework.response import  Response
 from .permissions import IsOwnerEventOrReadOnly, IsOrganizerOrReadOnly, IsOwnerCommentOrReadOnly
 from rest_framework.views import  APIView
@@ -10,6 +10,7 @@ from .models import Event, Registration, Comment, Rating
 
 # Events Views
 class EventCreateListView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOrganizerOrReadOnly]
     
     def get(self, request, format=None):
@@ -26,6 +27,7 @@ class EventCreateListView(APIView):
 
 
 class EventDetailUpdateDeleteView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerEventOrReadOnly]
     
     def get_object(self, event_id):
@@ -52,8 +54,9 @@ class EventDetailUpdateDeleteView(APIView):
         event.delete()
         return Response({'detail': 'Evento eliminado.'},status=status.HTTP_204_NO_CONTENT)
 
-# rating Views
+# Registration Views
 class RegisterEventView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, event_id, format=None):
@@ -75,6 +78,7 @@ class RegisterEventView(APIView):
 
 # Comments Views
 class CommentsEventCreateListView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request, event_id, format=None):
@@ -93,6 +97,7 @@ class CommentsEventCreateListView(APIView):
 
 
 class CommentsEventDetailUpdateDeleteView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentOrReadOnly]
 
     def get_object(self, event_id, comment_id):
@@ -123,6 +128,7 @@ class CommentsEventDetailUpdateDeleteView(APIView):
 
 # Rating Views
 class RatingsEventView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get(self, request, event_id, format=None):
