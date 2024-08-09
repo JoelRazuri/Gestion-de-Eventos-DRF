@@ -5,7 +5,8 @@ from .views import (
     ProfileListRegistrationsView,
     ProfileView,
     RegisterUserView,
-    LoginUserView
+    LoginUserView,
+    LogoutUserView
 )
 from django.urls import path
 
@@ -20,4 +21,5 @@ urlpatterns = [
     # Register and Login urls
     path('register/', RegisterUserView.as_view()),
     path('login/', LoginUserView.as_view()),
+    path('logout/', LogoutUserView.as_view()),
 ]
