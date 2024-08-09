@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from events.serializers import RegistrationSerializer
 from events.models import Registration
 from .serializers import CustomUserSerializer, CustomUserListSerializer, CustomUserTokenSerializer
@@ -9,7 +8,6 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import  Response
-from django.http import Http404
 
 
 # Profile Views for user
