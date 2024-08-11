@@ -1,5 +1,6 @@
-from django.db import models
+from django.core.exceptions import ValidationError
 from users.models import CustomUser
+from django.db import models
 
 
 class Event(models.Model):
@@ -12,6 +13,15 @@ class Event(models.Model):
 
     def __str__(self):
         return self.tilte
+    
+    def clean(self):
+        super().clean()  
+        if self.organizer.role != 1 and self.organizer.role != 2:
+            raise ValidationError('El usuario no tiene permiso para crear un evento.')
+
+    def save(self, *args, **kwargs):
+        self.clean() 
+        super().save(*args, **kwargs)
 
 
 class Registration(models.Model):
