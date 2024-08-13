@@ -20,7 +20,7 @@ DEBUG = os.getenv('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://*']
+CSRF_TRUSTED_ORIGINS = ['https://gestion-de-eventos-drf-production.up.railway.app']
 
 # Application definition
 
