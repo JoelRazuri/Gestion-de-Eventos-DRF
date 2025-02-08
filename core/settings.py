@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'whitenoise.runserver_nostatic',
+    'drf_spectacular',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -134,3 +135,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# Opciones de drf-spectacular 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Gestión de Eventos API',
+    'DESCRIPTION': 'Documentación de la API para el sistema de gestión de eventos',
+    'VERSION': '1.0.0',
+    'CONTACT': {'email': 'jrazuri98@gmail.com'},
+    'LICENSE': {'name': 'BSD License'},
+    'SERVE_INCLUDE_SCHEMA': False,  # Oculta el esquema RAW
+
+       'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+        'deepLinking': True,
+    },
+    'SECURITY': [
+        {
+            'Token': [],
+        }
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,  # Soporta schemas para métodos con request body
+}
+
