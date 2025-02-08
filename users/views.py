@@ -8,9 +8,11 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import  Response
+from drf_spectacular.utils import extend_schema
 
 
 # Profile Views for user
+@extend_schema(tags=['Users'])
 class ProfileView(APIView):
     authentication_classes = [TokenAuthentication]
 
@@ -20,9 +22,10 @@ class ProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=['Users'])
 class ProfileListRegistrationsView(APIView):
     authentication_classes = [TokenAuthentication]
-
+    
     def get(self, request):
         registrations = Registration.objects.filter(user=request.user)
         serializer = RegistrationSerializer(registrations, many=True)
@@ -30,6 +33,7 @@ class ProfileListRegistrationsView(APIView):
     
 
 # Register and Login views
+@extend_schema(tags=['Users'])
 class RegisterUserView(APIView):
     def post(self, request, format=None):
         serializer = CustomUserSerializer(data=request.data)
@@ -39,6 +43,7 @@ class RegisterUserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Users'])
 class LoginUserView(ObtainAuthToken):
     def post(self, request, format=None):
         login_serializer = self.serializer_class(data=request.data, context={'request':request})
@@ -61,6 +66,7 @@ class LoginUserView(ObtainAuthToken):
         return Response(login_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+@extend_schema(tags=['Users'])
 class LogoutUserView(APIView):
     authentication_classes = [TokenAuthentication]
 

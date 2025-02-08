@@ -6,9 +6,11 @@ from rest_framework.views import  APIView
 from .serializers import EventSerializer, CommentSerializer, RatingSerializer
 from django.http import Http404
 from .models import Event, Registration, Comment, Rating
+from drf_spectacular.utils import extend_schema
 
 
 # Events Views
+@extend_schema(tags=['Events'])
 class EventCreateListView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOrganizerOrReadOnly]
@@ -26,6 +28,7 @@ class EventCreateListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Events'])
 class EventDetailUpdateDeleteView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerEventOrReadOnly]
@@ -55,6 +58,7 @@ class EventDetailUpdateDeleteView(APIView):
         return Response({'detail': 'Evento eliminado.'},status=status.HTTP_204_NO_CONTENT)
 
 # Registration Views
+@extend_schema(tags=['Events Registrations'])
 class RegisterEventView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -77,6 +81,7 @@ class RegisterEventView(APIView):
         return Response({'detail': 'Inscripción cancelada.'}, status=status.HTTP_204_NO_CONTENT)
 
 # Comments Views
+@extend_schema(tags=['Events Comments'])
 class CommentsEventCreateListView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -96,6 +101,7 @@ class CommentsEventCreateListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Events Comments'])
 class CommentsEventDetailUpdateDeleteView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentOrReadOnly]
@@ -127,6 +133,7 @@ class CommentsEventDetailUpdateDeleteView(APIView):
 
 
 # Rating Views
+@extend_schema(tags=['Events Ratings'])
 class RatingsEventView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
