@@ -59,7 +59,7 @@ class RegisterEventView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
-    def get(self, request, event_id, format=None):
+    def post(self, request, event_id, format=None):
         event = get_object_or_404(Event, id=event_id)
         if Registration.objects.filter(event=event, user=request.user).exists():
             return Response({'detail': 'Ya estás inscrito en este evento.'}, status=status.HTTP_400_BAD_REQUEST)
