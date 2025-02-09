@@ -3,7 +3,8 @@ from .views import (
     ProfileView,
     RegisterUserView,
     LoginUserView,
-    LogoutUserView
+    LogoutUserView,
+    ListUsersView
 )
 from django.urls import path
 
@@ -16,4 +17,7 @@ urlpatterns = [
     path('user/register/', RegisterUserView.as_view()),
     path('user/login/', LoginUserView.as_view()),
     path('user/logout/', LogoutUserView.as_view()),
+
+    # List users for Administrators
+    path('users/', ListUsersView.as_view())
 ]
