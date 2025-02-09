@@ -9,24 +9,38 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import  Response
 from drf_spectacular.utils import extend_schema
-
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdministrator
 
 # Profile Views for user
 @extend_schema(tags=['Users'])
 class ProfileView(APIView):
     authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        profile = CustomUser.objects.get(id=request.user.id)
-        serializer = CustomUserListSerializer(profile)
+    def get(self, request, format=None):
+        serializer = CustomUserListSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def put(self, request, format=None):
+        serializer = CustomUserSerializer(request.user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, format=None):
+        request.user.delete()
+        return Response({'detail': 'Perfil eliminado.'},status=status.HTTP_204_NO_CONTENT)
+        
 
 
 @extend_schema(tags=['Users'])
 class ProfileListRegistrationsView(APIView):
     authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     
-    def get(self, request):
+    def get(self, request, format=None):
         registrations = Registration.objects.filter(user=request.user)
         serializer = RegistrationSerializer(registrations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -69,8 +83,21 @@ class LoginUserView(ObtainAuthToken):
 @extend_schema(tags=['Users'])
 class LogoutUserView(APIView):
     authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         token = Token.objects.get(user=request.user)
         token.delete()
         return Response({'message': 'Sesión cerrada'}, status=status.HTTP_200_OK)
+    
+
+# List users for Administrators
+@extend_schema(tags=['Users'])
+class ListUsersView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdministrator]
+
+    def get(self, request, format=None):
+        users = CustomUser.objects.all()
+        serializer = CustomUserListSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
