@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, permissions, authentication
 from rest_framework.response import  Response
-from .permissions import IsOwnerEventOrReadOnly, IsOrganizerOrReadOnly, IsOwnerCommentOrReadOnly
+from .permissions import IsOwnerEventOrReadOnly, IsOrganizerAdminOrReadOnly, IsOwnerCommentRatingOrReadOnly
 from rest_framework.views import  APIView
 from .serializers import EventSerializer, CommentSerializer, RatingSerializer
 from django.http import Http404
@@ -13,7 +13,7 @@ from drf_spectacular.utils import extend_schema
 @extend_schema(tags=['Events'])
 class EventCreateListView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOrganizerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOrganizerAdminOrReadOnly]
     
     def get(self, request, format=None):
         events = Event.objects.all()
@@ -104,7 +104,7 @@ class CommentsEventCreateListView(APIView):
 @extend_schema(tags=['Events Comments'])
 class CommentsEventDetailUpdateDeleteView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentRatingOrReadOnly]
 
     def get_object(self, event_id, comment_id):
         try:
@@ -144,11 +144,30 @@ class RatingsEventView(APIView):
         serializer = RatingSerializer(ratings, many=True)
         return Response (serializer.data, status=status.HTTP_200_OK)
 
-
     def post(self, request, event_id, format=None):
         event = get_object_or_404(Event, id=event_id)
         serializer = RatingSerializer(data=request.data)
         if serializer.is_valid(): 
             serializer.save(event=event, user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RatingEventUpdateView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentRatingOrReadOnly]
+
+    def get_object(self, event_id, rating_id):
+        try:
+            event = get_object_or_404(Event, id=event_id)
+            return Rating.objects.get(id=rating_id, event=event)
+        except Rating.DoesNotExist:
+            return Http404
+
+    def put(self, request, event_id, rating_id, format=None):
+        comment = self.get_object(event_id, rating_id)
+        serializer = RatingSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
