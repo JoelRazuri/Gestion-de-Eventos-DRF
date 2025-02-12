@@ -14,6 +14,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user.save()
         return user
     
+# Serializer to update users
+class CustomUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'name', 'last_name', 'email', 'password']
+
 # Serializer to list user data
 class CustomUserListSerializer(serializers.ModelSerializer):
     events = serializers.PrimaryKeyRelatedField(many=True, queryset=Event.objects.all())
