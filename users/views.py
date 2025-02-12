@@ -1,6 +1,6 @@
 from events.serializers import RegistrationSerializer
 from events.models import Registration
-from .serializers import CustomUserSerializer, CustomUserListSerializer, CustomUserTokenSerializer
+from .serializers import CustomUserSerializer, CustomUserListSerializer, CustomUserTokenSerializer, CustomUserUpdateSerializer
 from .models import CustomUser
 from rest_framework import status
 from rest_framework.views import  APIView
@@ -23,7 +23,7 @@ class ProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def put(self, request, format=None):
-        serializer = CustomUserSerializer(request.user, data=request.data)
+        serializer = CustomUserUpdateSerializer(request.user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
