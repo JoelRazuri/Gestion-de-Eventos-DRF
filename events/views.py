@@ -153,6 +153,7 @@ class RatingsEventView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Events Ratings'])
 class RatingEventUpdateView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentRatingOrReadOnly]
