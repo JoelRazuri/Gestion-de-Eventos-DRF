@@ -13,11 +13,16 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAdministrator
 from drf_spectacular.utils import OpenApiResponse
 
-# Profile Views for user
+
+# VISTAS DE PERFIL PARA USUARIO
 @extend_schema(
     tags=['Users'],
     request=CustomUserUpdateSerializer,  
-    responses={200: CustomUserListSerializer}  
+    responses={
+        200: OpenApiResponse(response=CustomUserListSerializer),
+        400: OpenApiResponse(description="Bad Request - Datos proporcionados inválidos"),
+        204: OpenApiResponse(description="Perfil de usuario eliminado con éxito")
+    }
 )
 class ProfileView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -36,25 +41,25 @@ class ProfileView(APIView):
         
     def delete(self, request, format=None):
         request.user.delete()
-        return Response({'detail': 'Perfil eliminado.'},status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Perfil eliminado.'}, status=status.HTTP_204_NO_CONTENT)
         
 
 
 @extend_schema(
     tags=['Users'],
-    responses={200: RegistrationSerializer} 
+    responses={200: RegistrationSerializer}
 )
 class ProfileListRegistrationsView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, format=None):
         registrations = Registration.objects.filter(user=request.user)
         serializer = RegistrationSerializer(registrations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
-# Register and Login views
+# VISTAS DE REGISTRO E INICIO DE SESIÓN
 @extend_schema(
     tags=['Users'],
     request=CustomUserSerializer, 
@@ -107,8 +112,8 @@ class LoginUserView(ObtainAuthToken):
     }
 )
 class LogoutUserView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication] 
+    permission_classes = [IsAuthenticated]  
 
     def post(self, request, format=None):
         token = Token.objects.get(user=request.user)
@@ -116,10 +121,10 @@ class LogoutUserView(APIView):
         return Response({'message': 'Sesión cerrada'}, status=status.HTTP_200_OK)
     
 
-# List users for Administrators
+# LISTA DE USUARIOS PARA ADMINISTRADORES
 @extend_schema(tags=['Users'])
 class ListUsersView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [TokenAuthentication] 
     permission_classes = [IsAdministrator]
 
     def get(self, request, format=None):
