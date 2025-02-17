@@ -19,6 +19,12 @@ class CustomUserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username', 'name', 'last_name', 'email', 'password']
+    
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password']) 
+            validated_data.pop('password')
+        return super().update(instance, validated_data)
 
 # Serializer to list user data
 class CustomUserListSerializer(serializers.ModelSerializer):
