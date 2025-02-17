@@ -11,9 +11,14 @@ from rest_framework.response import  Response
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAdministrator
+from drf_spectacular.utils import OpenApiResponse
 
 # Profile Views for user
-@extend_schema(tags=['Users'])
+@extend_schema(
+    tags=['Users'],
+    request=CustomUserUpdateSerializer,  
+    responses={200: CustomUserListSerializer}  
+)
 class ProfileView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -35,7 +40,10 @@ class ProfileView(APIView):
         
 
 
-@extend_schema(tags=['Users'])
+@extend_schema(
+    tags=['Users'],
+    responses={200: RegistrationSerializer} 
+)
 class ProfileListRegistrationsView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -47,7 +55,11 @@ class ProfileListRegistrationsView(APIView):
     
 
 # Register and Login views
-@extend_schema(tags=['Users'])
+@extend_schema(
+    tags=['Users'],
+    request=CustomUserSerializer, 
+    responses={201: CustomUserSerializer}
+)
 class RegisterUserView(APIView):
     def post(self, request, format=None):
         serializer = CustomUserSerializer(data=request.data)
@@ -57,7 +69,15 @@ class RegisterUserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=['Users'])
+@extend_schema(
+    tags=['Users'],
+    request=CustomUserTokenSerializer, 
+    responses={
+        201: CustomUserTokenSerializer,  
+        401: OpenApiResponse(description="El usuario no está activo"),
+        409: OpenApiResponse(description="Ya ha iniciado sesión")
+    }
+)
 class LoginUserView(ObtainAuthToken):
     def post(self, request, format=None):
         login_serializer = self.serializer_class(data=request.data, context={'request':request})
@@ -80,7 +100,12 @@ class LoginUserView(ObtainAuthToken):
         return Response(login_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-@extend_schema(tags=['Users'])
+@extend_schema(
+    tags=['Users'],
+    responses={
+        200: OpenApiResponse(description="Sesión cerrada exitosamente")
+    }
+)
 class LogoutUserView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
