@@ -7,10 +7,20 @@ from .serializers import EventSerializer, CommentSerializer, RatingSerializer
 from django.http import Http404
 from .models import Event, Registration, Comment, Rating
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse
 
 
-# Events Views
-@extend_schema(tags=['Events'])
+
+# VISTAS EVENTOS
+@extend_schema(
+    tags=['Events'],
+    request=EventSerializer,
+    responses={
+        200: OpenApiResponse(response=EventSerializer, description="Lista de eventos"),
+        201: OpenApiResponse(response=EventSerializer, description="Evento creado exitosamente"),
+        400: OpenApiResponse(description="Bad Request - Datos proporcionados inválidos")
+    }
+)
 class EventCreateListView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOrganizerAdminOrReadOnly]
@@ -28,7 +38,16 @@ class EventCreateListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=['Events'])
+@extend_schema(
+    tags=['Events'],
+    request=EventSerializer,
+    responses={
+        200: OpenApiResponse(response=EventSerializer, description="Detalles del evento"),
+        204: OpenApiResponse(description="Evento eliminado exitosamente"),
+        400: OpenApiResponse(description="Bad Request - Datos proporcionados inválidos"),
+        404: OpenApiResponse(description="Evento no encontrado")
+    }
+)
 class EventDetailUpdateDeleteView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerEventOrReadOnly]
@@ -57,8 +76,18 @@ class EventDetailUpdateDeleteView(APIView):
         event.delete()
         return Response({'detail': 'Evento eliminado.'},status=status.HTTP_204_NO_CONTENT)
 
-# Registration Views
-@extend_schema(tags=['Events Registrations'])
+
+# VISTAS REGISTRO A EVENTO
+@extend_schema(
+    tags=['Events Registrations'],
+    request=None,
+    responses={
+        201: OpenApiResponse(description="Inscripción exitosa"),
+        204: OpenApiResponse(description="Inscripción cancelada"),
+        400: OpenApiResponse(description="Bad Request - Ya estás inscrito o el evento alcanzó su capacidad máxima"),
+        404: OpenApiResponse(description="Evento no encontrado")
+    }
+)
 class RegisterEventView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -80,8 +109,18 @@ class RegisterEventView(APIView):
         registration.delete()
         return Response({'detail': 'Inscripción cancelada.'}, status=status.HTTP_204_NO_CONTENT)
 
-# Comments Views
-@extend_schema(tags=['Events Comments'])
+
+# VISTAS COMENTARIOS
+@extend_schema(
+    tags=['Events Comments'],
+    request=CommentSerializer,
+    responses={
+        200: OpenApiResponse(response=CommentSerializer, description="Lista de comentarios"),
+        201: OpenApiResponse(description="Comentario creado exitosamente"),
+        400: OpenApiResponse(description="Bad Request - Datos proporcionados inválidos"),
+        404: OpenApiResponse(description="Evento no encontrado")
+    }
+)
 class CommentsEventCreateListView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -101,7 +140,17 @@ class CommentsEventCreateListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=['Events Comments'])
+@extend_schema(
+    tags=['Events Comments'],
+    request=CommentSerializer,
+    responses={
+        200: OpenApiResponse(response=CommentSerializer, description="Comentario obtenido exitosamente"),
+        204: OpenApiResponse(description="Comentario eliminado exitosamente"),
+        400: OpenApiResponse(description="Bad Request - Datos proporcionados inválidos"),
+        404: OpenApiResponse(description="Comentario o evento no encontrado")
+    }
+)
+
 class CommentsEventDetailUpdateDeleteView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentRatingOrReadOnly]
@@ -132,8 +181,16 @@ class CommentsEventDetailUpdateDeleteView(APIView):
         return Response({'detail': 'Comentario eliminado'}, status=status.HTTP_204_NO_CONTENT)
 
 
-# Rating Views
-@extend_schema(tags=['Events Ratings'])
+# VISTAS RATING
+@extend_schema(
+    tags=['Events Ratings'],
+    request=RatingSerializer,
+    responses={
+        200: OpenApiResponse(response=RatingSerializer, description="Calificaciones obtenidas exitosamente"),
+        201: OpenApiResponse(response=RatingSerializer, description="Calificación creada exitosamente"),
+        400: OpenApiResponse(description="Bad Request - Datos proporcionados inválidos")
+    }
+)
 class RatingsEventView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -153,7 +210,15 @@ class RatingsEventView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=['Events Ratings'])
+@extend_schema(
+    tags=['Events Ratings'],
+    request=RatingSerializer,
+    responses={
+        200: OpenApiResponse(response=RatingSerializer, description="Calificación actualizada exitosamente"),
+        400: OpenApiResponse(description="Bad Request - Datos proporcionados inválidos"),
+        404: OpenApiResponse(description="No se encontró la calificación")
+    }
+)
 class RatingEventUpdateView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerCommentRatingOrReadOnly]
