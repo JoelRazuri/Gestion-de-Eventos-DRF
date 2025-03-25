@@ -10,6 +10,8 @@ La **Gestion de Eventos API** es una aplicación desarrollada con Django REST Fr
 - Sistema de calificación de eventos.
 - Gestión del perfil de usuario con opciones para actualizar y eliminar el perfil.
 
+Además, el panel de administración de Django permite gestionar todos los datos de la API sin necesidad de desarrollar un frontend adicional. Desde este panel se pueden crear, actualizar y eliminar eventos, usuarios, comentarios, calificaciones y más. Esto facilita el uso del backend para quienes deseen implementar un frontend personalizado en el futuro.
+
 ## Requisitos del sistema
 - **Python 3.11.4**
 - **Django 5.0.6**
@@ -44,6 +46,15 @@ La **Gestion de Eventos API** es una aplicación desarrollada con Django REST Fr
    ```bash
    python manage.py runserver
    ```
+
+## Uso del Panel de Administración
+El panel de administración de Django permite gestionar todos los datos de la API de forma sencilla. Para acceder, sigue estos pasos:
+
+ 1.Ingresa a la URL: **`http://localhost:8000/admin`**
+
+ 2.Inicia sesión con las credenciales del superusuario que creaste previamente.
+
+ 3.Desde el panel puedes realizar todas las acciones que permite la API, como gestionar eventos, usuarios, comentarios y calificaciones.
 
 ## Uso de la API
 ### Autenticación
