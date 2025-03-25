@@ -61,6 +61,7 @@ La **Gestion de Eventos API** es una aplicación desarrollada con Django REST Fr
 - **`PUT /events/<int:event_id>/`** - Actualizar un evento.
 - **`DELETE /events/<int:event_id>/`** - Eliminar un evento.
 - **`POST /events/<int:event_id>/register/`** - Registrarse en un evento.
+- **`DELETE /events/<int:event_id>/register/`** - Cancelar la inscripción a un evento.
 - **`POST /events/<int:event_id>/comments/`** - Crear un comentario en un evento.
 - **`GET /events/<int:event_id>/comments/`** - Listar comentarios de un evento.
 - **`PUT /events/<int:event_id>/comments/<int:comment_id>/`** - Actualizar un comentario.
@@ -87,7 +88,7 @@ El proyecto está organizado en tres carpetas principales:
 ## Autor
 **Joel Rázuri**  
 Estudiante de **Licenciatura en Informática** y desarrollador backend.   
-[https://www.linkedin.com/in/joelrazuri/](#)
+**Linkedin:** [https://www.linkedin.com/in/joelrazuri/](#)
 
 
 
