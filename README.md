@@ -50,11 +50,11 @@ Además, el panel de administración de Django permite gestionar todos los datos
 ## Uso del Panel de Administración
 El panel de administración de Django permite gestionar todos los datos de la API de forma sencilla. Para acceder, sigue estos pasos:
 
- 1.Ingresa a la URL: **`http://localhost:8000/admin`**
+   1. Ingresa a la URL: **`http://localhost:8000/admin`**
 
- 2.Inicia sesión con las credenciales del superusuario que creaste previamente.
+   2. Inicia sesión con las credenciales del superusuario que creaste previamente.
 
- 3.Desde el panel puedes realizar todas las acciones que permite la API, como gestionar eventos, usuarios, comentarios y calificaciones.
+   3. Desde el panel puedes realizar todas las acciones que permite la API, como gestionar eventos, usuarios, comentarios y calificaciones.
 
 ## Uso de la API
 ### Autenticación
